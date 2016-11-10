@@ -1,0 +1,15 @@
+d995ead3bf4c64e23e40fb3438c79ec6 *DESCRIPTION
+d32239bcb673463ab874e80d47fae504 *LICENSE
+06660503a275b8ec563a7569f6973c93 *NAMESPACE
+b555edce6cb917f1430659a502ef0bb1 *R/associateData-method.R
+6a12f9952135643ac85a1fa51b3f91f2 *R/plot.associations-method.R
+0ce428d0e420b7a6ee904f480cf0f577 *R/summary.associations-methods.R
+8122bb24d5547d35974bc04b2e588ebd *README.md
+a8aa3acf1b69532cb9a9bb4d1d27f14f *data/SmallExampleMetabTransc.RData
+66215b574ac580ee16185b6769f7e545 *data/datalist
+4c6aebc2261276949878a358d3923454 *inst/CITATION
+6f9935d9286c0fd701920b131b84e348 *man/SmallExampleMetabTransc.Rd
+92f4e9e70477517288850995ac057c5c *man/associateData-methods.Rd
+5e7816a80d56999ff67390b170e1d7dd *man/dynOmics-package.Rd
+d6499abd2a0f63d422b8cdebf13013af *man/plot.associations.Rd
+68e5f40ca1d6f9a2a5adfbf36ad55deb *man/summary.associations.Rd
