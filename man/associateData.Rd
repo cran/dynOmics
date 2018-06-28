@@ -33,15 +33,17 @@ Function to estimate differences in expression initation of trajectories to iden
 associateData() takes as input two data sets of interest and performs a pairwise associations comparison between features using a fast Fourier transform approach to detect delays (also called 'associations') between the different features. Note that the argument `numCores` indicates the number of CPUs  and is detected by default in the function to perform parallelization. The final result is a table with a row for each pairwise comparison. The output presents the dynOmics estimated delay between two features, the p-value (`p`) and correlation coefficient (`cor`) from a Pearson's test, before and after the time profiles have been realigned according to the dynOmics estimated delay.
 }
 \examples{
-data(SmallExampleMetabTransc)
-associations <- associateData(Metabolites[,1],Transcripts[,1:50])
-summary(associations)
-plot(associations,Metabolites,Transcripts,feature1=1)
+\dontrun{ 
+data(Metabolites)
+data(Transcripts)
+associations <- associateData(Metabolites[,1],Transcripts[,c(1:50)])
+#summary(associations)
+#plot(associations,Metabolites,Transcripts,feature1=1)
+}
 }
 \references{
-Straube J., Bernard A., Huang B.E., Le Cao K.-A.(2015).  \emph{DynOmics - A new algorithm using fast Fourier transform to reveal dynamic molecule interactions } In preparation
+Straube J., Bernard A., Huang B.E., Le Cao K.-A.(2017).  \emph{DynOmics to identify delays and co-expression patterns across time course experiments} Scientific Reports
 }
 \seealso{
 \code{\link{summary.associations}}, \code{\link{plot.associations}}
 }
-

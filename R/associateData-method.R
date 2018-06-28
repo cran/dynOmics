@@ -17,8 +17,7 @@
 #' 
 #' Function to estimate differences in expression initation of trajectories to identify associations between time course 'omics' data.
 #' 
-#' @importFrom snow makeCluster
-#' @importFrom parallel stopCluster parLapply detectCores clusterExport
+#' @importFrom parallel stopCluster parLapply detectCores clusterExport makeCluster
 #' @importFrom stats cor cor.test fft na.omit p.adjust xtabs
 #' @import methods 
 #' @usage associateData(data1,data2,numCores)
@@ -37,15 +36,18 @@
 #' \item{corBefore}{ \code{numeric} Pearson correlation before applying the predicted time shift.} 
 #' \item{corAfter}{ \code{numeric} Pearson correlation after applying the predicted time shift.}
 #' }
-#' @references  Straube J., Bernard A., Huang B.E., Le Cao K.-A.(2015).  \emph{DynOmics - A new algorithm using fast Fourier transform to reveal dynamic molecule interactions } In preparation
+#' @references  Straube J., Bernard A., Huang B.E., Le Cao K.-A.(2017).  \emph{DynOmics to identify delays and co-expression patterns across time course experiments} Scientific Reports
 #' @seealso \code{\link{summary.associations}}, \code{\link{plot.associations}}
-#' @examples 
-#' data(SmallExampleMetabTransc)
-#' associations <- associateData(Metabolites[,1],Transcripts[,1:50])
-#' summary(associations)
-#' plot(associations,Metabolites,Transcripts,feature1=1)
+#' @examples
+#'\dontrun{ 
+#' data(Metabolites)
+#' data(Transcripts)
+#' associations <- associateData(Metabolites[,1],Transcripts[,c(1:50)])
+#' #summary(associations)
+#' #plot(associations,Metabolites,Transcripts,feature1=1)
+#' }
 #' @docType methods
-#' @rdname associateData-methods
+#' @rdname associateData
 
 #setGeneric('associateData',function(data1,data2,numCores){standardGeneric('associateData')})
 #setClassUnion("missingOrnumeric", c("missing", "numeric"))
@@ -94,7 +96,7 @@ associateData <- function(data1,data2,numCores){
 
   #m <- matrix(NA,ncol=7,nrow=nc*nc2F)
 
-  cl <- makeCluster(num.Cores,"SOCK")
+  cl <- makeCluster(num.Cores,"PSOCK")
   clusterExport(cl, list('data1','data2','fft','get.delay','convert.fft','nc','nc2','singleData'),envir=environment())
 
   ncF <- ifelse(singleData,nc-1,nc)
@@ -151,7 +153,7 @@ convert.fft <- function(cs, sample.rate=1) {
 
 get.delay<- function(x,y) {
   cord <- cor.test(x,y)
-  if(abs(cord$estimate)!=1 & !is.na(cord)){
+  if(abs(cord$estimate)!=1 & !is.na(cord$estimate)){
   l <- length(x)
   ori.fft<- convert.fft(fft(x))[2:(l/2),]
 

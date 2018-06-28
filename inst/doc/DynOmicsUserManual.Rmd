@@ -1,0 +1,276 @@
+---
+author: "Jasmin Straube, Bevan Emma Huang, Kim-Anh Le Cao"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{DynOmics user manual}
+  %\usepackage[UTF-8]{inputenc}
+  %highlight: zenburn
+fig_caption: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(dpi = 100, echo=TRUE, warning=FALSE, message=FALSE, 
+                      fig.show=TRUE, fig.keep = 'all')
+  options(mc.cores=2)
+```
+
+
+
+# DynOmics in a nutshell
+
+DynOmics is a method based on Fast Fourier Transform to detect and estimate delays between time course 'Omics' data sets. Delay is estimated in standard units and visualisations are provided. The set of methods and functions enable to identify whether two 'Omics' time profiles are associated.
+
+## Citation
+Our methods manuscript is published in Scientific reports.
+To cite the package, type:
+
+```{r include=T,eval=F}
+citation('dynOmics')
+```
+
+## Authors
+Jasmin Straube with contributions from Dr Kim-Anh Le Cao (The University of Queensland, Brisbane, Australia, <k.lecao@unimelb.com.edu>) and Dr Emma Huang (Janssen Research & Development, CA, USA <bhuang26@ITS.JNJ.com>)
+
+Maintainer: Jasmin Straube <j.straube@qimrberghofer.edu.au>
+
+
+
+# Getting started
+## Installation
+DynOmics is implemented in R and is available on R CRAN or bitbucket.
+
+To install from R CRAN: 
+```{r include=T,eval=F}
+#install from CRAN
+install.packages('dynOmics')
+```
+
+Alternatively, to install from bitbucket you will first need to install <tt>devtools</tt>:
+```{r include=T,eval=F}
+#install from bitbucket
+install.packages('devtools')
+library(devtools)
+install_bitbucket('Jasmin87/dynOmics')
+```
+
+If you are experiencing trouble with your proxy try the following:
+
+```{r include=T,eval=F}
+install.packages('httr')
+library(httr)
+#Replace the information in "" with your according proxy information
+set_config(use_proxy(url="http://proxyname.company.com",
+                     port=8080,username="XXX",password="XXX")) 
+
+```
+
+
+To load <tt>dynOmics</tt> into your R session, type in your console:
+
+```{r,eval=T, warning=FALSE,message=FALSE}
+library(dynOmics)
+?dynOmics
+```
+
+`?dynOmics` will give you an overview of the functions available.
+
+## General input data format
+
+The input data format for dynOmics is one or two matrices with time points in rows and molecules (e.g. transcripts, metabolites) in columns (Table \@ref(transcript)). DynOmics requires a single measurement per time point (either as is, averaged across all samples or summarised using our LMMS method, Straube et al., 2015 and next Section for more details). Time points are ordered in ascending order. 
+
+
+```{r transcript}
+kable(head(Transcripts[,1:4],7),format = "html",caption ="Example time course data for a transcriptomics data set, where we assume there is one sample measured per time point.",row.names = T)
+
+```
+
+
+
+# Detecting delays between a query and a reference data sets with one measurement per time point
+
+
+## Example data description
+Simulated data called `Metabolites` and `Transcripts` are available in the package and were obtained from Redestig et al., 2011. Metabolite and transcript levels were obtained using an impulse model (Chechik and Koller, 2009). Functions were used to model five different metabolite patterns and for each metabolite 50 associated transcript levels were generated. Time lags were introduced ranging from -2 to 2 with a probability 0.1, 0.2, 0.4, 0.2, 0.1. Simulated profiles include seven time points, normal distributed noise was introduced with mean zero and standard deviation 0.1.
+
+The `Metabolites` data set consists of five metabolites measured at 7 time points with a single measurement per time point. The `Transcripts` data set consists of 250 transcripts measured at 7 time points with one measurement per time point. 
+In the `dynOmics` analysis, we will consider each metabolite time profile as a 'reference profile' and all transcripts as 'query profiles'.
+
+```{r, include=T}
+# Data description and references
+?Metabolites
+?Transcripts
+# load data into workspace
+data(Metabolites)
+data(Transcripts)
+# extract of the Metabolite data set
+head(Metabolites)
+```
+
+## Detecting delays
+The dynOmics function <tt>associateData()</tt> takes as input two data sets of interest and performs a pairwise associations comparison between features using a Fast Fourier Transform approach to detect delays (also called 'associations') between the different features. Note that the argument `numCores` indicates the number of CPUs and is detected by default in the function to perform parallelization.
+
+```{r}
+#identify associations between the Metabolites and Transcripts data sets
+
+asso <- associateData(Metabolites,Transcripts,numCores = 2)
+```
+
+The final result is a table with a row for each pairwise comparison as shown in the table below. The output presents the dynOmics estimated delay between two features, the p-value (`p`) and correlation coefficient (`cor`) from a Pearson's test, before and after the time profiles have been realigned according to the dynOmics estimated delay.
+
+
+```{r}
+kable(head(asso))
+```
+
+Here we note that some of the estimated delay appear outside the expected range as the algorithm is searching for every possible delay between each reference and all queries. A more guided search can be perfomed, as presented in the Subsection where one specific reference time profile is defined.
+
+
+The <tt>summary()</tt> function provides the number of associations before and after realignment of the time profiles according to the estimated delays, only for profiles declared significant. An overview of the range of delays that were detected is summarised.
+
+```{r,include=T}
+summary(asso)
+```
+
+## Visualising estimated delays
+The `dynOmics` package also allows to visualise features with and without realignement (or shift) of the time profiles according to the estimated delays. Features to be visualised can be filtered either using FDR corrected p-values or a correlation threshold.
+Here is an example with of a plot with all Transcripts associated with the Metabolite Feature 2 with no shift:
+
+```{r ,include=T}
+plot(asso, Metabolites,Transcripts, feature1 = 2, fdr=FALSE, cutoff = 0.9)
+```
+
+
+
+Here is an example with of a plot with all Transcripts associated with the Metabolite Feature 2 with a  shift:
+
+```{r ,include=T}
+# and aligns / corrects Transcripts according to dynOmics estimated delay
+plot(asso, Metabolites, Transcripts, feature1 = 2, withShift=TRUE, fdr=FALSE, cutoff = 0.9)
+```
+See also `?plot.associations` for more details.
+
+
+
+
+
+# Data set with several measurements per time point or unequally sampled time points
+
+In the case where the data include more than one sample per time point, then the expression of a feature needs to be summarised into a single value per time point. We suggest using the LMMS method (Straube et al. 2015) available in the `lmms` R package. <tt>lmms</tt> uses a linear mixed effect model spline framework to accurately model time course data. The modelling technique also enables to interpolate time points when data sets were not measured at the exact same time points. 
+
+
+## Example data description
+We provide an example provided in the lmms package, see `?kidneySimTimeGroup`, where we extract samples from 'Group1' to do the spline modelling: 
+
+```{r,include=T,warning=F,message=F}
+#from the lmmSpline example
+#install.packages('lmms') if required
+if(!require(lmms)){install.packages("lmms")}
+library('lmms')
+#load example data
+data(kidneySimTimeGroup)
+
+#Only extract samples from Group 1
+G1 <- which(kidneySimTimeGroup$group=="G1")
+```
+
+The data include uneven time sampling, 
+```{r}
+unique(kidneySimTimeGroup$time[G1])
+```
+
+as well as multiple samples per time point, as summarised here (time points in rows and unique sample ID in column for the first 6 individuals):
+```{r}
+# for the first 6 unique individuals
+table(kidneySimTimeGroup$time[G1],sampleID=kidneySimTimeGroup$sampleID[G1])[,1:6]
+```
+
+The data include the measurement of `r ncol(kidneySimTimeGroup$data[G1,])` simulated profiles (columns), and `r length(unique(kidneySimTimeGroup$sampleID[G1]))` unique individuals measured on `r length(unique(kidneySimTimeGroup$time[G1]))` time points.
+We store this information as follows:
+
+```{r}
+# expression data from samples from group 1
+data.kidney <- kidneySimTimeGroup$data[G1,]
+dim(data.kidney)
+
+time <- kidneySimTimeGroup$time[G1]
+
+sampleID.kidney <- kidneySimTimeGroup$sampleID[G1]
+```
+
+## Modelling time trajectories with Linear Mixed Model Splines
+
+We model the trajectories of the profiles
+```{r}
+#Model data using a data-driven mixed effect spline model
+LMMS.model <- lmmSpline(data= data.kidney,
+                          time=time,
+                          sampleID=sampleID.kidney,
+                          keepModels = TRUE)
+```
+
+## Interpolate equally spaced time intervals
+
+We first define equally spaced time points:
+```{r}
+time.regular <- seq(min(time), max(time), by=0.5)
+time.regular
+```
+
+We then interpolate the splines expression level for those regularly spaced time points:
+```{r}
+# need to transpose interpolated data
+data.interpolate <- t(predict(LMMS.model, timePredict = time.regular))
+```
+
+The final data set to be analysed with `dynOmics` is of dimension (number of unique time points x number of features)
+```{r}
+dim(data.interpolate)
+```
+
+
+# Detecting delays in one data set
+Following from last section, we analyse the LMMS modelled data.
+
+## All possible pairwise comparisons
+Here each feature acts as a reference or a query and we compare all pairs of features within the data set:
+
+```{r}
+asso.onedata  <- associateData(data.interpolate,numCores = 2)
+kable(head(asso.onedata))
+```
+
+## Define one specific reference time profile
+Alternatively, we can specify a reference of interest in the data set and seek for all other queries
+
+```{r}
+# define reference of interest
+reference <-data.interpolate[,1]
+data.query <- data.interpolate[, -1]
+asso.ref.onedata  <- associateData(data1 = reference, data2 =  data.query,numCores = 2)
+kable(head(asso.ref.onedata))
+```
+
+
+
+# Dealing with large data sets, some tips
+When trying to identify pairwise associations the number of comparison increases quadratically with the number of features. Since calculations are independent we use the R package <tt>parallel</tt>to increase computing performance and the function `associateData` uses CPU cores internally. However, to provide meaningful biological results we advise the user to refine the association analysis using one or several alternatives described below:
+
+
++ Filter out time profiles according to an overall fold-change or some criterion of interest (e.g. differential expression)
++ Only define one, or a small subset of references in one data set (e.g. 1 or 2 metabolites, see example above 'Detecting delay in one data set')
++ Set a reference as a 'representative' time profile based on prior clustering method of your choice before running `dynOmics`
+
+
+
+ 
+# References
++ Redestig, H. and Costa,I.G. "Detection and interpretation of metabolite-transcript coresponses using combined profiling data." Bioinformatics 27(13) (2011), pp. i357 65.
+ 
++ Chechik, G., and Daphne K. "Timing of gene expression responses to environmental changes." Journal of Computational Biology 16.2 (2009): 279-290.
+
++ Straube, J., Gorse A-D., PROOF Centre, Huang, BE. and Le Cao K-A. "A Linear Mixed Model Spline Framework for Analysing Time Course 'Omics' Data." PloS one 10.8 (2015): e0134540, [http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0134540](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0134540)
+
++ Straube, J., Huang, B. E., & Le Cao, K. A. (2017). "DynOmics to identify delays and co-expression patterns across time course experiments." Scientific reports, 7, 40131.[https://www.nature.com/articles/srep40131](https://www.nature.com/articles/srep40131)

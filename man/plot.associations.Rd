@@ -40,14 +40,16 @@ Plot showing the associated trajectories with or without estimated time shift.
 The function allows to visualise features with and without realignement (or shift) of the time profiles according to the estimated delays using associateData() function from the dynOmics package. Features to be visualised can be filtered either using FDR corrected p-values or a correlation threshold.
 }
 \examples{
-data(SmallExampleMetabTransc)
-associations <- associateData(Metabolites[,1:2],Transcripts[,1:100])
+\dontrun{
+data(Metabolites)
+data(Transcripts)
+associations <- associateData(Metabolites[,1:2],Transcripts[,c(1:100)])
 #if you only define feature1 or feature2 if will plot all associations
 plot(associations,Metabolites,Transcripts,feature1=1,withShift = TRUE)
 #if you define feature1 and feature2 it will only plot these two profiles
 plot(associations,Metabolites,Transcripts,feature1="Metabolite 1",feature2="Transcript 2")
 }
+}
 \seealso{
 \code{\link{associateData}}, \code{\link{summary.associations}}
 }
-

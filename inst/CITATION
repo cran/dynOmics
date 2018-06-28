@@ -2,10 +2,10 @@ year <- sub("-.*", "", meta$Date)
 note <- sprintf("R package version %s", meta$Version)
 
 bibentry(bibtype = "Article",
-         title = "DynOmics to identify delays and co-expression patterns across time course experiments.",
+         title = "Straube, J., Huang, B. E., & Le Cao, K. A. (2017). DynOmics to identify delays and co-expression patterns across time course experiments. Scientific reports, 7, 40131.",
          author = c(person("Jasmin", "Straube"),
                     person("Bevan Emma", "Huang"),
                     person("Kim-Anh", "Le Cao")),
-         year = "2016",
-         journal = "bioRxiv preprint 076257",
-         url = "http://biorxiv.org/content/early/2016/09/20/076257")
+         year = "2017",
+         journal = "Scientific reports",
+         url = "https://www.nature.com/articles/srep40131")

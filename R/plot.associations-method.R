@@ -34,13 +34,16 @@
 #' @details The function allows to visualise features with and without realignement (or shift) of the time profiles according to the estimated delays using associateData() function from the dynOmics package. Features to be visualised can be filtered either using FDR corrected p-values or a correlation threshold.
 #' @return plot showing the associated data as calculated by associateData()
 #' @seealso \code{\link{associateData}}, \code{\link{summary.associations}}
-#' @examples 
-#' data(SmallExampleMetabTransc)
-#' associations <- associateData(Metabolites[,1:2],Transcripts[,1:100])
+#' @examples
+#'\dontrun{
+#' data(Metabolites)
+#' data(Transcripts)
+#' associations <- associateData(Metabolites[,1:2],Transcripts[,c(1:100)])
 #' #if you only define feature1 or feature2 if will plot all associations
 #' plot(associations,Metabolites,Transcripts,feature1=1,withShift = TRUE)
 #' #if you define feature1 and feature2 it will only plot these two profiles
 #' plot(associations,Metabolites,Transcripts,feature1="Metabolite 1",feature2="Transcript 2")
+#' }
 #' @method plot associations
 #' @export
 plot.associations <- function(x,data1,data2, time, feature1,feature2, cutoff,fdr=T,absCor=T,withShift=F,...){
@@ -115,7 +118,7 @@ plot.associations <- function(x,data1,data2, time, feature1,feature2, cutoff,fdr
     data <- data2[,indexT]
     dc <- length(indexT)
     
-    print(l.n)
+    #print(l.n)
     
     if(l.n==1){
       data1 <- scale(unlist(as.vector(data1)))
@@ -221,6 +224,6 @@ plot.associations <- function(x,data1,data2, time, feature1,feature2, cutoff,fdr
   cor.pos <-signif(mean(x$corAfter[index][x$corAfter[index]>0],na.rm=T),2)
   title <- paste("Associations with feature",fe,ifelse(withShift,"with shift",""),"\n Av cor pos=",cor.pos,'(#',l.pos,"),neg=" ,cor.neg ,'(#',l.neg,')')
   
-   ggplot(newdf) + geom_line(aes(x = time, y = value,  group = ind,col=cor),data = newdf) +ggtitle(title) +labs(x='Time ',y='Intensity')+theme(axis.title.x = element_text(size=14),axis.text.x = element_text(size=10),axis.title.y=element_text(size=14),axis.text.y=element_text(size=14)) + scale_color_continuous(limits=c(-1,1),low = "blue",high = "orange") + theme(panel.background = element_rect(fill = 'white', colour = 'white'),legend.title=element_blank())  + geom_line(aes(x = time, y = value,linetype=Feature),size=1.1,data = newdf2)+xlim(range(newdf2$time))#+scale_linetype_identity()
+   ggplot(newdf) + geom_line(aes(x = time, y = value,  group = ind,col=cor),data = newdf) +ggtitle(title) +labs(x='Time ',y='Intensity')+theme(axis.title.x = element_text(size=14),axis.text.x = element_text(size=10),axis.title.y=element_text(size=14),axis.text.y=element_text(size=14)) + scale_color_continuous(limits=c(-1,1),low = "blue",high = "orange") + theme(panel.background = element_rect(fill = 'white', colour = 'white'),legend.title=element_blank())+theme_bw()  + geom_line(aes(x = time, y = value,linetype=Feature),size=1.1,data = newdf2)+xlim(range(newdf2$time))#+scale_linetype_identity()
   }
   

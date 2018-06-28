@@ -1,24 +1,21 @@
 Package: dynOmics
-Version: 1.0
-Date: 2016-11-02
+Type: Package
 Title: Fast Fourier Transform to Identify Associations Between Time
         Course Omics Data
-Authors@R: c(person("Jasmin", "Straube", role = c("aut", "cre"),email = "jasmin.straube@qimrberghofer.edu.au"),
-			person("Kim-Anh", "Le Cao", role = "aut"),
-			person("Emma", "Huang", role = "aut"),
-			person("Anne", "Bernard", role = "ctb"))
-Author: Jasmin Straube [aut, cre],
-    Kim-Anh Le Cao [aut],
-    Emma Huang [aut],
-    Anne Bernard [ctb]
-Maintainer: Jasmin Straube <jasmin.straube@qimrberghofer.edu.au>
+Version: 1.2
+Date: 2018-06-12
 Depends: R (>= 3.0.0), ggplot2
-Imports: methods, parallel, gplots, snow
-Description: Implements the fast Fourier transform to estimate delays of expression initiation between trajectories to integrate and
+Imports: methods, parallel, gplots
+Author: Jasmin Straube [aut, cre], Kim-Anh Le Cao [aut], Emma Huang [aut], Anne Bernard [ctb]
+Maintainer: Jasmin Straube <jasmin.straube@qimrberghofer.edu.au>
+Description: Implements a method based on the fast Fourier transform to estimate delays of expression initiation between trajectories to integrate and
     analyse time course omics data.
 License: GPL (>= 2) | file LICENSE
-RoxygenNote: 5.0.1
+VignetteBuilder: knitr
+Suggests: knitr, lmms, nlme, testthat, snow
 NeedsCompilation: no
-Packaged: 2016-11-09 06:49:40 UTC; j.Straube
+LazyData: true
+RoxygenNote: 6.0.1
+Packaged: 2018-06-27 22:32:33 UTC; JasminS
 Repository: CRAN
-Date/Publication: 2016-11-10 19:56:29
+Date/Publication: 2018-06-28 10:41:01 UTC

@@ -18,5 +18,9 @@ To see how you can use dynOmics and run examples type in your console:
 ?dynOmics
 ?associateData
 ~~~~
-### Who do I talk to? ###
+
+### User manual ###
+The user manual is provided in both pdf and Rmd formats, see the [source codes here](https://bitbucket.org/Jasmin87/dynomics/src/e763cca05cc3e82cdc8fc5e59c85dd63deef7f56?at=master)
+
+### Whom to contact? ###
 The examples will hopefully answer most questions about dynOmics. However, additional questions can be directed to jasmin.straube[at]qimrberghofer.edu.au. We appreciate bug reports in the software or R functions and welcome any suggestions or comments for improvements.

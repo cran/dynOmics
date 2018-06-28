@@ -18,8 +18,10 @@ summary of the \code{associations} object.
 Summarises the \code{associations} object returned by the \code{\link{associateData}} method.
 }
 \examples{
-data(SmallExampleMetabTransc)
-associations <- associateData(Metabolites[,1],Transcripts[,1:50])
+\dontrun{
+data(Metabolites)
+data(Transcripts)
+associations <- associateData(Metabolites[,1],Transcripts[,c(1:50)])
 summary(associations)
 }
-
+}

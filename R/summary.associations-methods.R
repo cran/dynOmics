@@ -19,10 +19,13 @@
 #' @param object An object of class \code{associations} .
 #' @param ... Additional arguments which are passed to \code{summary}.
 #' @return summary of the \code{associations} object.
-#' @examples 
-#' data(SmallExampleMetabTransc)
-#' associations <- associateData(Metabolites[,1],Transcripts[,1:50])
+#' @examples
+#' \dontrun{
+#' data(Metabolites)
+#' data(Transcripts)
+#' associations <- associateData(Metabolites[,1],Transcripts[,c(1:50)])
 #' summary(associations)
+#' }
 #' @method summary associations
 #' @export
 summary.associations <-function(object, ...){
